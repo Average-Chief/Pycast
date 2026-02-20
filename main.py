@@ -1,8 +1,6 @@
-
 from scanner import build_commands
 from ui.window import run_ui
 from config import HOTKEY
-
 
 def main():
     print("[pycast] scanning apps...")
