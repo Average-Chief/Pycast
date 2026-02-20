@@ -1,0 +1,28 @@
+# ---- Python ----
+*.pyc
+*.pyo
+*.pyd
+
+# DO NOT ignore __pycache__
+# __pycache__/   <-- intentionally NOT ignored
+
+# ---- Virtual Environments ----
+venv/
+.env/
+.env.*
+
+# ---- Databases ----
+*.db
+*.sqlite
+*.sqlite3
+
+# ---- OS / Editor ----
+.DS_Store
+Thumbs.db
+
+# ---- Logs ----
+*.log
+
+# ---- IDEs ----
+.vscode/
+.idea/
