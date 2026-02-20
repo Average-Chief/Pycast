@@ -1,0 +1,40 @@
+[
+  {
+    "name": "Run Dev",
+    "description": "Opens Chrome, VS Code and Amazon Music",
+    "aliases": ["dev", "code", "work"],
+    "steps": [
+      { "type": "app",  "value": "chrome" },
+      { "type": "app",  "value": "visual studio code" },
+      { "type": "url",  "value": "https://music.amazon.in" }
+    ]
+  },
+  {
+    "name": "Morning",
+    "description": "Start the day",
+    "aliases": ["gm", "start"],
+    "steps": [
+      { "type": "url",  "value": "https://gmail.com" },
+      { "type": "url",  "value": "https://calendar.google.com" },
+      { "type": "url",  "value": "https://news.ycombinator.com" }
+    ]
+  },
+  {
+    "name": "Study",
+    "description": "YouTube and Notion",
+    "aliases": ["focus", "learn"],
+    "steps": [
+      { "type": "url", "value": "https://youtube.com" },
+      { "type": "url", "value": "https://notion.so" }
+    ]
+  },
+  {
+    "name": "Timepass",
+    "description": "YouTube and Music",
+    "aliases": ["focus", "learn"],
+    "steps": [
+      { "type": "url", "value": "https://youtube.com" },
+      { "type": "url", "value": "https://music.amazon.in" }
+    ]
+  }
+]

@@ -14,7 +14,8 @@ from launcher_core import launch
 from blur import apply_blur
 from icons import preload_icons_async
 from fileops import parse_file_command, execute_file_command, FILE_COMMANDS
-from .rows import draw_row, draw_web_search_row, draw_file_command_row
+from flows import load_flows, search_flows, run_flow, open_flows_file
+from .rows import draw_row, draw_web_search_row, draw_file_command_row, draw_flow_row, draw_flow_header
 from . import state
 
 
@@ -88,17 +89,23 @@ def run_ui(commands: dict, hotkey: str):
         sh = root.winfo_screenheight()
         root.geometry(f"{WIDTH}x{h}+{(sw - WIDTH)//2}+{sh//3}")
 
+    # ── Load flows ────────────────────────────────────────────────────────
+    flows = load_flows()
+
+    def reload_flows():
+        nonlocal flows
+        flows = load_flows()
+        show_feedback(f"✓ {len(flows)} flows reloaded", ok=True)
+
     # ── Feedback label (shown briefly after file ops) ──────────────────────
     _feedback_job  = [None]
-    _in_feedback   = [False]   # flag — suppresses update_list while message shows
+    _in_feedback   = [False]
 
     def show_feedback(msg: str, ok: bool = True):
-        """Flash a status message in the search bar for 2 seconds."""
         _in_feedback[0] = True
         colour = "#50c878" if ok else "#e05050"
         entry.config(fg=colour)
         entry_var.set(msg)
-        # clear the results list so no web search row appears
         for w in list_frame.winfo_children():
             w.destroy()
         set_geometry(rows=0)
@@ -118,18 +125,44 @@ def run_ui(commands: dict, hotkey: str):
         q         = raw.strip()
         has_query = bool(q and q != PLACEHOLDER)
 
-        # ── File command mode ─────────────────────────────────────────────
+        # ── Flow mode  (prefix >) ─────────────────────────────────────────
+        if q.startswith(">"):
+            flow_query   = q[1:].strip()
+            flow_results = search_flows(flow_query, flows)
+
+            # header row
+            draw_flow_header(list_frame, _edit_flows_file)
+
+            if not flow_results:
+                tk.Label(list_frame, text="No flows found — type ? to see file commands",
+                         font=FONT_SUB, bg=BG, fg="#3d2d5a", anchor="w").pack(
+                             fill="x", padx=20, pady=10)
+                set_geometry(rows=2)
+                return
+
+            visible = min(len(flow_results), MAX_ROWS)
+            for i, flow in enumerate(flow_results[:MAX_ROWS]):
+                draw_flow_row(
+                    list_frame, i, flow,
+                    i == state.selected,
+                    _execute_flow,
+                    _edit_flows_file,
+                )
+            # header counts as 0.6 of a row visually
+            set_geometry(rows=visible + 1)
+            return
+
+        # ── File command mode  (prefix ?) ────────────────────────────────
         if q.startswith("?"):
             parsed = parse_file_command(q)
             if parsed:
                 if parsed["state"] == "help":
-                    # one row per command
                     draw_file_command_row(list_frame, parsed, False, lambda: None)
                     set_geometry(rows=len(FILE_COMMANDS))
                 else:
                     draw_file_command_row(list_frame, parsed, True, _run_file_command)
                     set_geometry(rows=1)
-                return
+            return
 
         # ── Normal app search ─────────────────────────────────────────────
         n = min(len(state.matches), MAX_ROWS)
@@ -141,7 +174,6 @@ def run_ui(commands: dict, hotkey: str):
         for i, name in enumerate(state.matches[:MAX_ROWS]):
             draw_row(list_frame, i, name, i == state.selected, commands, confirm)
 
-        # web search row
         if has_query:
             web_sel = (state.selected == n)
             draw_web_search_row(list_frame, q, web_sel, web_search)
@@ -162,8 +194,8 @@ def run_ui(commands: dict, hotkey: str):
             state.selected = 0
             redraw()
             return
-        # don't run fuzzy match for file commands
-        if text.strip().startswith("?"):
+        # flow and file command modes skip fuzzy app matching
+        if text.strip().startswith(">") or text.strip().startswith("?"):
             state.matches  = []
             state.selected = 0
             redraw()
@@ -189,6 +221,19 @@ def run_ui(commands: dict, hotkey: str):
     entry.bind("<FocusOut>", on_focus_out)
 
     # ── Actions ───────────────────────────────────────────────────────────
+    def _execute_flow(flow: dict):
+        """Run a flow then hide the launcher."""
+        import threading
+        name = flow.get("name", "flow")
+        show_feedback(f"⚡ Running '{name}'…", ok=True)
+        # run in a thread so UI doesn't freeze during the step delays
+        threading.Thread(target=run_flow, args=(flow, commands), daemon=True).start()
+
+    def _edit_flows_file():
+        """Open flows.json in the user's default editor."""
+        open_flows_file()
+        hide()
+
     def _run_file_command():
         q      = entry_var.get().strip()
         parsed = parse_file_command(q)
@@ -209,7 +254,15 @@ def run_ui(commands: dict, hotkey: str):
         q         = entry_var.get().strip()
         has_query = bool(q and q != PLACEHOLDER)
 
-        # file command — Enter executes it
+        # flow mode — Enter runs selected flow
+        if q.startswith(">"):
+            flow_query   = q[1:].strip()
+            flow_results = search_flows(flow_query, flows)
+            if flow_results and state.selected < len(flow_results):
+                _execute_flow(flow_results[state.selected])
+            return
+
+        # file command mode — Enter executes it
         if q.startswith("?"):
             _run_file_command()
             return
@@ -234,6 +287,18 @@ def run_ui(commands: dict, hotkey: str):
     def move_selection(delta: int):
         q         = entry_var.get().strip()
         has_query = bool(q and q != PLACEHOLDER)
+
+        # flow mode navigation
+        if q.startswith(">"):
+            flow_query   = q[1:].strip()
+            flow_results = search_flows(flow_query, flows)
+            total = min(len(flow_results), MAX_ROWS)
+            if total == 0:
+                return
+            state.selected = (state.selected + delta) % total
+            redraw()
+            return
+
         # no arrow navigation in file command mode
         if q.startswith("?"):
             return
