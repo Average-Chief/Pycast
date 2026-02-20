@@ -2,14 +2,18 @@
 *.pyc
 *.pyo
 *.pyd
-
-# DO NOT ignore __pycache__
-# __pycache__/   <-- intentionally NOT ignored
+__pycache__/
 
 # ---- Virtual Environments ----
 venv/
+.venv/
 .env/
 .env.*
+
+# ---- PyInstaller ----
+build/
+dist/
+*.spec.bak
 
 # ---- Databases ----
 *.db
@@ -19,6 +23,7 @@ venv/
 # ---- OS / Editor ----
 .DS_Store
 Thumbs.db
+desktop.ini
 
 # ---- Logs ----
 *.log
@@ -26,3 +31,11 @@ Thumbs.db
 # ---- IDEs ----
 .vscode/
 .idea/
+
+# ---- PyCast specific ----
+# icon cache (regenerated at runtime)
+icon_cache/
+*.cache
+
+# any test/scratch files
+main2.py
