@@ -22,7 +22,7 @@ def run_ui(commands: dict, hotkey: str):
 
     # ── Build window ──────────────────────────────────────────────────────
     root = tk.Tk()
-    root.title("_launcher_")
+    root.title("_pycast_")
     root.overrideredirect(True)
     root.attributes("-topmost", True)
     root.configure(bg=TRANSPARENT_KEY)

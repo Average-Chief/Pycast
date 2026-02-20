@@ -1,0 +1,165 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <!-- Main purple-to-blue gradient -->
+    <linearGradient id="mainGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#a855f7"/>
+      <stop offset="50%" style="stop-color:#6366f1"/>
+      <stop offset="100%" style="stop-color:#3b82f6"/>
+    </linearGradient>
+
+    <!-- Spotlight beam gradient -->
+    <linearGradient id="beamGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#c084fc;stop-opacity:0.9"/>
+      <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:0"/>
+    </linearGradient>
+
+    <!-- Glow for the lens circle -->
+    <radialGradient id="lensGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" style="stop-color:#e9d5ff;stop-opacity:1"/>
+      <stop offset="40%" style="stop-color:#c084fc;stop-opacity:0.8"/>
+      <stop offset="100%" style="stop-color:#7c3aed;stop-opacity:0.2"/>
+    </radialGradient>
+
+    <!-- Outer ring gradient -->
+    <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#c084fc"/>
+      <stop offset="100%" style="stop-color:#2563eb"/>
+    </linearGradient>
+
+    <!-- Background gradient -->
+    <radialGradient id="bgGrad" cx="40%" cy="38%" r="65%">
+      <stop offset="0%" style="stop-color:#1e1030"/>
+      <stop offset="100%" style="stop-color:#0a0a14"/>
+    </radialGradient>
+
+    <!-- Inner bg shimmer -->
+    <radialGradient id="shimmer" cx="40%" cy="35%" r="50%">
+      <stop offset="0%" style="stop-color:#4c1d95;stop-opacity:0.4"/>
+      <stop offset="100%" style="stop-color:#1e1b4b;stop-opacity:0"/>
+    </radialGradient>
+
+    <!-- Beam clip -->
+    <clipPath id="beamClip">
+      <rect x="0" y="0" width="512" height="512" rx="120"/>
+    </clipPath>
+
+    <!-- Soft glow filter -->
+    <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="8" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <!-- Strong glow for lens -->
+    <filter id="lensGlowFilter" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="14" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <!-- Subtle glow for beam -->
+    <filter id="beamGlowFilter" x="-20%" y="-5%" width="140%" height="120%">
+      <feGaussianBlur stdDeviation="12" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- ── Rounded square background ── -->
+  <rect x="0" y="0" width="512" height="512" rx="112" fill="url(#bgGrad)"/>
+  <rect x="0" y="0" width="512" height="512" rx="112" fill="url(#shimmer)"/>
+
+  <!-- ── Subtle grid texture ── -->
+  <g clip-path="url(#beamClip)" opacity="0.04">
+    <line x1="0" y1="64"  x2="512" y2="64"  stroke="white" stroke-width="1"/>
+    <line x1="0" y1="128" x2="512" y2="128" stroke="white" stroke-width="1"/>
+    <line x1="0" y1="192" x2="512" y2="192" stroke="white" stroke-width="1"/>
+    <line x1="0" y1="256" x2="512" y2="256" stroke="white" stroke-width="1"/>
+    <line x1="0" y1="320" x2="512" y2="320" stroke="white" stroke-width="1"/>
+    <line x1="0" y1="384" x2="512" y2="384" stroke="white" stroke-width="1"/>
+    <line x1="0" y1="448" x2="512" y2="448" stroke="white" stroke-width="1"/>
+    <line x1="64"  y1="0" x2="64"  y2="512" stroke="white" stroke-width="1"/>
+    <line x1="128" y1="0" x2="128" y2="512" stroke="white" stroke-width="1"/>
+    <line x1="192" y1="0" x2="192" y2="512" stroke="white" stroke-width="1"/>
+    <line x1="256" y1="0" x2="256" y2="512" stroke="white" stroke-width="1"/>
+    <line x1="320" y1="0" x2="320" y2="512" stroke="white" stroke-width="1"/>
+    <line x1="384" y1="0" x2="384" y2="512" stroke="white" stroke-width="1"/>
+    <line x1="448" y1="0" x2="448" y2="512" stroke="white" stroke-width="1"/>
+  </g>
+
+  <!-- ── Spotlight beam (clipped to rounded rect) ── -->
+  <g clip-path="url(#beamClip)" filter="url(#beamGlowFilter)">
+    <!-- Wide outer beam -->
+    <polygon
+      points="204,218 308,218 440,512 72,512"
+      fill="url(#beamGrad)"
+      opacity="0.35"
+    />
+    <!-- Tight inner beam -->
+    <polygon
+      points="222,218 290,218 370,512 142,512"
+      fill="url(#beamGrad)"
+      opacity="0.4"
+    />
+    <!-- Core hot beam -->
+    <polygon
+      points="240,218 272,218 310,512 202,512"
+      fill="url(#beamGrad)"
+      opacity="0.5"
+    />
+  </g>
+
+  <!-- ── Magnifying glass body ── -->
+  <!-- Outer glow ring -->
+  <circle cx="256" cy="204" r="108" fill="none"
+    stroke="url(#ringGrad)" stroke-width="3" opacity="0.3"
+    filter="url(#glow)"/>
+
+  <!-- Lens fill (dark with glow centre) -->
+  <circle cx="256" cy="204" r="90" fill="url(#lensGlow)"
+    filter="url(#lensGlowFilter)" opacity="0.15"/>
+
+  <!-- Glass ring — main -->
+  <circle cx="256" cy="204" r="90" fill="none"
+    stroke="url(#ringGrad)" stroke-width="14"
+    filter="url(#glow)"/>
+
+  <!-- Glass ring — inner highlight -->
+  <circle cx="256" cy="204" r="90" fill="none"
+    stroke="white" stroke-width="2.5" opacity="0.18"/>
+
+  <!-- Lens inner shimmer arc (top-left highlight) -->
+  <path d="M 196,164 A 72,72 0 0 1 268,138"
+    fill="none" stroke="white" stroke-width="5"
+    stroke-linecap="round" opacity="0.35"/>
+
+  <!-- ── Handle ── -->
+  <!-- Handle glow -->
+  <line x1="322" y1="276" x2="388" y2="348"
+    stroke="url(#ringGrad)" stroke-width="28"
+    stroke-linecap="round" opacity="0.3"
+    filter="url(#glow)"/>
+  <!-- Handle main -->
+  <line x1="322" y1="276" x2="388" y2="348"
+    stroke="url(#ringGrad)" stroke-width="18"
+    stroke-linecap="round"/>
+  <!-- Handle highlight -->
+  <line x1="322" y1="276" x2="388" y2="348"
+    stroke="white" stroke-width="3"
+    stroke-linecap="round" opacity="0.2"/>
+
+  <!-- ── Lens centre dot (focal point) ── -->
+  <circle cx="256" cy="204" r="10" fill="white" opacity="0.9"
+    filter="url(#lensGlowFilter)"/>
+  <circle cx="256" cy="204" r="5" fill="white"/>
+
+  <!-- ── Outer border ring (very subtle) ── -->
+  <rect x="1.5" y="1.5" width="509" height="509" rx="111"
+    fill="none" stroke="url(#ringGrad)" stroke-width="1.5" opacity="0.4"/>
+</svg>

@@ -10,6 +10,10 @@ MANUAL_COMMANDS = {
     "youtube":  "start https://youtube.com",
     "github":   "start https://github.com",
     "gmail":    "start https://mail.google.com",
+    "chatgpt":  "start https://chat.openai.com",
+    "music":    "start https://music.amazon.in",
+    "claude":   "start https://claude.ai",
+    "deepseek": "start https://chat.deepseek.com/",
 }
 
 SCAN_DIRS = [
