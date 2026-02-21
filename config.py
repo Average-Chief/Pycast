@@ -23,11 +23,6 @@ SCAN_DIRS = [
 
 HOTKEY = "ctrl+alt+space"
 
-# ── Blur ──────────────────────────────────────
-# This colour is punched through to DWM so the acrylic effect shows through.
-# It must not appear anywhere else in the UI.
-TRANSPARENT_KEY = "#010101"
-
 # ── Palette ───────────────────────────────────
 BG          = "#1a1a1a"
 BORDER_CLR  = "#323232"
