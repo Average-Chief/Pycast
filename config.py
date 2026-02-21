@@ -1,9 +1,4 @@
 import os
-
-# ─────────────────────────────────────────────
-#  MANUAL COMMANDS  (always override scanned apps)
-#  "what you type" : "what runs"
-# ─────────────────────────────────────────────
 MANUAL_COMMANDS = {
     "notepad":  "notepad",
     "explorer": "explorer",
