@@ -18,7 +18,7 @@ SCAN_DIRS = [
 
 HOTKEY = "ctrl+alt+space"
 
-# ── Palette ───────────────────────────────────
+# palette
 BG          = "#1a1a1a"
 BORDER_CLR  = "#323232"
 DIVIDER_CLR = "#2a2a2a"
@@ -41,13 +41,13 @@ NO_RES_FG   = "#404040"
 ICON_BG     = "#282828"
 ICON_FG     = "#606060"
 
-# ── Fonts ─────────────────────────────────────
+# fonts
 FONT_SEARCH = ("Segoe UI Light", 18)
 FONT_NAME   = ("Segoe UI", 12)
 FONT_SEL    = ("Segoe UI Semibold", 12)
 FONT_SUB    = ("Segoe UI", 9)
 
-# ── Layout ────────────────────────────────────
+# layout
 WIDTH       = 640
 SEARCH_H    = 64
 ROW_H       = 48

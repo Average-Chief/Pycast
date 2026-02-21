@@ -3,10 +3,7 @@ import glob
 import subprocess
 from config import SCAN_DIRS, MANUAL_COMMANDS
 
-
-# ─────────────────────────────────────────────
 #  TRADITIONAL APPS  (.lnk from Start Menu)
-# ─────────────────────────────────────────────
 def scan_lnk_files() -> dict:
     found = {}
     skip  = ("uninstall", "help", "readme", "release notes", "documentation")
@@ -22,21 +19,7 @@ def scan_lnk_files() -> dict:
 
     return found
 
-
-# ─────────────────────────────────────────────
 #  MICROSOFT STORE APPS
-#
-#  Store apps don't have .lnk shortcuts or .exe files you can call directly.
-#  Windows registers them under a hidden virtual folder: shell:AppsFolder
-#  Each app has an AppUserModelId (AUMID) like:
-#      Microsoft.WindowsCalculator_8wekyb3d8bbwe!App
-#  You launch them with:
-#      explorer.exe shell:AppsFolder\<AUMID>
-#
-#  We enumerate all AUMIDs using PowerShell's Get-StartApps cmdlet which
-#  returns every pinnable app — both traditional and Store — with its name
-#  and AppID.
-# ─────────────────────────────────────────────
 def scan_store_apps() -> dict:
     """
     Run Get-StartApps via PowerShell and return {display_name: launch_cmd}.
@@ -63,14 +46,10 @@ def scan_store_apps() -> dict:
         lines = result.stdout.strip().splitlines()
         if len(lines) < 2:
             return found
-
-        # skip CSV header ("Name","AppID")
         for line in lines[1:]:
             line = line.strip().strip('"')
             if not line:
                 continue
-
-            # CSV row:  "Display Name","AppID"
             parts = line.split('","')
             if len(parts) != 2:
                 continue
@@ -82,9 +61,6 @@ def scan_store_apps() -> dict:
                 continue
             if any(w in display_name for w in skip):
                 continue
-
-            # Store apps have a '!' in their AUMID; traditional apps are plain paths.
-            # We only want Store apps here — .lnk scanner handles the rest.
             if "!" not in app_id:
                 continue
 
@@ -100,17 +76,11 @@ def scan_store_apps() -> dict:
 
     return found
 
-
-# ─────────────────────────────────────────────
 #  LAUNCH HELPER  (used by launcher_core for store apps)
-# ─────────────────────────────────────────────
 def is_store_app(cmd: str) -> bool:
     return cmd.startswith("explorer shell:AppsFolder\\")
 
-
-# ─────────────────────────────────────────────
 #  BUILD FULL COMMAND TABLE
-# ─────────────────────────────────────────────
 def build_commands() -> dict:
     print("[scanner] scanning traditional apps...")
     table = scan_lnk_files()
@@ -119,11 +89,8 @@ def build_commands() -> dict:
     store = scan_store_apps()
     print(f"[scanner] found {len(store)} Store apps")
 
-    # merge — lnk takes priority over store if same name
     for k, v in store.items():
         table.setdefault(k, v)
-
-    # manual commands always win
     for k, v in MANUAL_COMMANDS.items():
         table[k] = os.path.expandvars(v)
 

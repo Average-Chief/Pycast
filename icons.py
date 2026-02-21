@@ -12,17 +12,10 @@ except ImportError:
     ICONS_AVAILABLE = False
     print("[launcher] pip install pywin32 pillow  → to get real app icons")
 
-
-# ─────────────────────────────────────────────
-#  GLOBALS
-# ─────────────────────────────────────────────
 _icon_cache = {}
 _shell = None
 
-
-# ─────────────────────────────────────────────
-#  SHORTCUT RESOLUTION (.lnk)
-# ─────────────────────────────────────────────
+# shortcut res (.lnk)
 def _get_shell():
     global _shell
     if _shell is None and ICONS_AVAILABLE:
@@ -40,16 +33,12 @@ def _resolve_lnk(path: str) -> str:
         if sh:
             sc = sh.CreateShortCut(path)
 
-            # real executable target
             if sc.TargetPath and os.path.exists(sc.TargetPath):
                 return sc.TargetPath
-
-            # fallback → icon location
             if sc.IconLocation:
                 icon_path = sc.IconLocation.split(",")[0]
                 if os.path.exists(icon_path):
                     return icon_path
-
             if sc.Arguments:
                 return sc.Arguments
     except Exception:
@@ -59,7 +48,6 @@ def _resolve_lnk(path: str) -> str:
 
 
 def _clean_icon_path(path: str):
-    """Remove ',0' icon index etc."""
     if not path:
         return path
 
@@ -69,9 +57,6 @@ def _clean_icon_path(path: str):
     return path.strip('"')
 
 
-# ─────────────────────────────────────────────
-#  HICON → PIL IMAGE
-# ─────────────────────────────────────────────
 def _hicon_to_pil(hicon: int, size: int):
     screen_dc = win32gui.GetDC(0)
     hdc = win32ui.CreateDCFromHandle(screen_dc)
@@ -111,12 +96,8 @@ def _hicon_to_pil(hicon: int, size: int):
         1,
     )
 
-
-# ─────────────────────────────────────────────
-#  EXTRACTION METHODS
-# ─────────────────────────────────────────────
+#extraction ways
 def _via_shgetfileinfo(path: str, size: int):
-    """Fast + reliable shell icon extraction."""
     try:
         SHGFI_ICON = 0x100
         SHGFI_LARGEICON = 0x000
@@ -159,7 +140,6 @@ def _via_extracticonex(path: str, size: int):
 
 
 def _via_private(path: str, size: int):
-    """Last resort extraction."""
     try:
         target = _resolve_lnk(path) if path.lower().endswith(".lnk") else path
         target = _clean_icon_path(target)
@@ -188,10 +168,7 @@ def _via_private(path: str, size: int):
     except Exception:
         return None
 
-
-# ─────────────────────────────────────────────
-#  DEFAULT WINDOWS ICON (fallback)
-# ─────────────────────────────────────────────
+#default icons
 def _get_default_icon(size: int):
     try:
         SHGFI_ICON = 0x100
@@ -208,15 +185,10 @@ def _get_default_icon(size: int):
     except Exception:
         return None
 
-
-# ─────────────────────────────────────────────
-#  MASTER EXTRACTOR
-# ─────────────────────────────────────────────
+#master extraction function
 def _extract_icon(cmd: str, size: int = 32):
     if not cmd:
         return None
-
-    # Microsoft Store / shell apps
     if cmd.startswith("explorer shell:AppsFolder\\"):
         try:
             shell_path = cmd.replace("explorer ", "")
@@ -226,7 +198,6 @@ def _extract_icon(cmd: str, size: int = 32):
         except Exception:
             pass
 
-    # Traditional apps
     for method in (_via_shgetfileinfo, _via_extracticonex, _via_private):
         try:
             img = method(cmd, size)
@@ -234,16 +205,9 @@ def _extract_icon(cmd: str, size: int = 32):
                 return img
         except Exception:
             continue
-
-    # fallback icon
     return _get_default_icon(size)
 
-
-# ─────────────────────────────────────────────
-#  PUBLIC API
-# ─────────────────────────────────────────────
 def get_icon(name: str, commands: dict, size: int = 22):
-    """Return Tk PhotoImage for command."""
     if not ICONS_AVAILABLE:
         return None
 
@@ -263,7 +227,6 @@ def get_icon(name: str, commands: dict, size: int = 22):
 
 
 def preload_icons_async(names: list, commands: dict):
-    """Warm icon cache in background thread."""
     if not ICONS_AVAILABLE:
         return
 

@@ -2,10 +2,6 @@ import os
 import shutil
 import re
 
-# ─────────────────────────────────────────────
-#  COMMAND DEFINITIONS
-#  Each entry:  (trigger_prefixes, syntax_hint, description, icon)
-# ─────────────────────────────────────────────
 FILE_COMMANDS = [
     {
         "id":       "newfolder",
@@ -33,38 +29,15 @@ FILE_COMMANDS = [
     },
 ]
 
-
-# ─────────────────────────────────────────────
-#  PARSE
-# ─────────────────────────────────────────────
-
 def parse_file_command(text: str) -> "dict | None":
-    """
-    Given the raw entry text, return a dict describing the file command
-    or None if the text is not a file command at all.
-
-    Return dict keys:
-      state   "help"     → just "?" typed, show all commands
-              "hint"     → partial match, show syntax hint for matched cmd
-              "ready"    → fully formed command, ready to execute on Enter
-              "error"    → path problem — include "message" key
-      id      command id  ("newfolder" / "delete" / "rename")
-      icon    emoji
-      syntax  hint string
-      desc    description
-      args    dict of parsed arguments (when state == "ready")
-      message human-readable status/error string
-    """
     t = text.strip()
 
     if not t.startswith("?"):
         return None
 
-    # bare "?" → show all commands
     if t == "?":
         return {"state": "help"}
 
-    # find which command this matches
     matched_cmd = None
     for cmd in FILE_COMMANDS:
         for alias in cmd["aliases"]:
@@ -75,17 +48,14 @@ def parse_file_command(text: str) -> "dict | None":
             break
 
     if not matched_cmd:
-        # starts with ? but unknown command
         return {
             "state":   "error",
             "message": f'Unknown command "{t.split(":")[0]}". Type ? to see all commands.',
             "icon":    "❓",
         }
-
-    # find the colon separator
     colon_idx = t.find(":")
     if colon_idx == -1 or colon_idx == len(t) - 1:
-        # no args yet — show hint
+        # no args - show hint
         return {
             "state":  "hint",
             "id":     matched_cmd["id"],
@@ -95,8 +65,7 @@ def parse_file_command(text: str) -> "dict | None":
         }
 
     args_raw = t[colon_idx + 1:].strip()
-
-    # ── newfolder ────────────────────────────────────────────────────────
+    #new folder
     if matched_cmd["id"] == "newfolder":
         path = os.path.expandvars(args_raw)
         if os.path.exists(path):
@@ -113,8 +82,7 @@ def parse_file_command(text: str) -> "dict | None":
             "desc":   f'Create folder: {path}',
             "args":   {"path": path},
         }
-
-    # ── delete ───────────────────────────────────────────────────────────
+    #delete
     if matched_cmd["id"] == "delete":
         path = os.path.expandvars(args_raw)
         if not os.path.exists(path):
@@ -132,8 +100,7 @@ def parse_file_command(text: str) -> "dict | None":
             "desc":   f'Delete {kind}: {path}',
             "args":   {"path": path, "kind": kind},
         }
-
-    # ── rename ───────────────────────────────────────────────────────────
+    #rename
     if matched_cmd["id"] == "rename":
         if "|" not in args_raw:
             return {
@@ -154,8 +121,6 @@ def parse_file_command(text: str) -> "dict | None":
                 "icon":    matched_cmd["icon"],
                 "message": f'Source not found: {src}',
             }
-
-        # if dst is just a name (no path separators), put it in same dir
         if not os.path.dirname(dst_raw):
             dst = os.path.join(os.path.dirname(src), dst_raw)
         else:
@@ -170,23 +135,6 @@ def parse_file_command(text: str) -> "dict | None":
         }
 
     return None
-
-
-# ─────────────────────────────────────────────
-#  SHELL NOTIFICATIONS
-#
-#  Without these, Explorer won't show changes until manually refreshed.
-#  SHChangeNotify posts a message to the shell's notification queue so
-#  every open Explorer window updates immediately.
-#
-#  Event constants (shell32):
-#    SHCNE_MKDIR        0x00000008  — folder created
-#    SHCNE_RMDIR        0x00000010  — folder removed
-#    SHCNE_DELETE       0x00000002  — file deleted
-#    SHCNE_RENAMEFOLDER 0x00020000  — folder renamed/moved
-#    SHCNE_RENAMEITEM   0x00000001  — file renamed/moved
-#    SHCNF_PATHW        0x0005      — args are unicode path pointers
-# ─────────────────────────────────────────────
 import ctypes
 
 _shell32 = ctypes.windll.shell32
@@ -210,9 +158,7 @@ def _notify_shell_mkdir(path: str):
 
 
 def _notify_shell_delete(path: str):
-    # use RMDIR for folders, DELETE for files
     event = SHCNE_RMDIR if not os.path.exists(path) and os.sep in path else SHCNE_DELETE
-    # simpler: just fire both — shell ignores the irrelevant one
     _notify(SHCNE_DELETE, path)
     _notify(SHCNE_RMDIR,  path)
 
@@ -224,15 +170,7 @@ def _notify_shell_rename(src: str, dst: str):
         _notify(SHCNE_RENAMEITEM, src, dst)
 
 
-# ─────────────────────────────────────────────
-#  EXECUTE
-# ─────────────────────────────────────────────
-
 def execute_file_command(parsed: dict) -> "tuple[bool, str]":
-    """
-    Execute a parsed file command.
-    Returns (success: bool, message: str).
-    """
     if parsed.get("state") != "ready":
         return False, "Command not ready"
 

@@ -5,13 +5,7 @@ import time
 
 FLOWS_FILE = os.path.join(os.path.dirname(__file__), "flows.json")
 
-
-# ─────────────────────────────────────────────
-#  LOAD
-# ─────────────────────────────────────────────
-
 def load_flows() -> list[dict]:
-    """Load flows from flows.json. Returns [] if missing or invalid."""
     if not os.path.exists(FLOWS_FILE):
         _create_default_flows_file()
         return []
@@ -37,7 +31,6 @@ def load_flows() -> list[dict]:
 
 
 def _create_default_flows_file():
-    """Create a starter flows.json so users know the format."""
     default = [
         {
             "name": "Run Dev",
@@ -56,15 +49,7 @@ def _create_default_flows_file():
         print(f"[flows] could not create flows.json: {e}")
 
 
-# ─────────────────────────────────────────────
-#  SEARCH
-# ─────────────────────────────────────────────
-
 def search_flows(query: str, flows: list[dict]) -> list[dict]:
-    """
-    Filter flows by query — matches against name AND aliases, case-insensitive.
-    Empty query returns all flows.
-    """
     q = query.strip().lower()
     if not q:
         return flows
@@ -80,15 +65,7 @@ def search_flows(query: str, flows: list[dict]) -> list[dict]:
     return results
 
 
-# ─────────────────────────────────────────────
-#  RUN
-# ─────────────────────────────────────────────
-
 def run_flow(flow: dict, commands: dict):
-    """
-    Execute all steps in a flow sequentially.
-    Uses the commands table for 'app' steps — same resolution as normal launch.
-    """
     from launcher_core import launch
 
     name  = flow.get("name", "unnamed")
@@ -106,7 +83,6 @@ def run_flow(flow: dict, commands: dict):
 
         try:
             if step_type == "app":
-                # find best matching command name
                 matched = _resolve_app(value, commands)
                 if matched:
                     print(f"[flows]   step {i+1}: app → '{matched}'")
@@ -124,8 +100,6 @@ def run_flow(flow: dict, commands: dict):
 
         except Exception as e:
             print(f"[flows]   step {i+1}: error — {e}")
-
-        # small delay between steps so apps don't race each other
         if i < len(steps) - 1:
             time.sleep(0.4)
 
@@ -133,35 +107,20 @@ def run_flow(flow: dict, commands: dict):
 
 
 def _resolve_app(value: str, commands: dict) -> "str | None":
-    """
-    Find the best matching command name for an app value.
-    Tries exact match first, then prefix, then substring.
-    """
     v = value.lower()
-
-    # exact
     if v in commands:
         return v
 
-    # prefix
     for k in commands:
         if k.startswith(v):
             return k
-
-    # substring
     for k in commands:
         if v in k:
             return k
 
     return None
 
-
-# ─────────────────────────────────────────────
-#  OPEN flows.json IN DEFAULT EDITOR
-# ─────────────────────────────────────────────
-
 def open_flows_file():
-    """Open flows.json in whatever the user's default .json editor is."""
     try:
         os.startfile(FLOWS_FILE)
     except Exception:
