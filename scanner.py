@@ -21,10 +21,6 @@ def scan_lnk_files() -> dict:
 
 #  MICROSOFT STORE APPS
 def scan_store_apps() -> dict:
-    """
-    Run Get-StartApps via PowerShell and return {display_name: launch_cmd}.
-    Launch command format:  explorer shell:AppsFolder\<AppID>
-    """
     found = {}
     skip  = ("uninstall", "help", "readme", "documentation", "runtime",
              "framework", "vcredist", "redistributable", "microsoft visual c")
@@ -55,7 +51,7 @@ def scan_store_apps() -> dict:
                 continue
 
             display_name = parts[0].strip('"').strip().lower()
-            app_id       = parts[1].strip('"').strip()
+            app_id = parts[1].strip('"').strip()
 
             if not display_name or not app_id:
                 continue
@@ -76,7 +72,7 @@ def scan_store_apps() -> dict:
 
     return found
 
-#  LAUNCH HELPER  (used by launcher_core for store apps)
+# (used by launcher_core for store apps)
 def is_store_app(cmd: str) -> bool:
     return cmd.startswith("explorer shell:AppsFolder\\")
 
