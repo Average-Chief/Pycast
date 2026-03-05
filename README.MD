@@ -1,5 +1,5 @@
 <p align="center">
-<img src="pycast_logo.png" alt="PyCast Logo" width="180">
+<img src="https://cdn.discordapp.com/attachments/1163559454000816242/1479108010633728152/pycast_logo.png?ex=69aad62e&is=69a984ae&hm=542112926378cb433e2b65394d4475117b4fce225738747982255b82c9f576ba&" alt="PyCast Logo" width="180">
 </p>
 <p align="center">
 A keyboard-driven launcher for Windows built with Python.
