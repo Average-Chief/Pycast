@@ -1,6 +1,6 @@
 # PyCast
 <p align="center">
-  <img src="https://img.shields.io/badge/Python-3.6+-blue?style=for-the-badge&logo=python">
+  <img src="https://img.shields.io/badge/Python-3.6+-blue">
   <img src="https://img.shields.io/badge/Platform-Windows-blue">
   <img src="https://img.shields.io/badge/License-MIT-green">
   <img src="https://img.shields.io/badge/Keyboard-Driven-success">
