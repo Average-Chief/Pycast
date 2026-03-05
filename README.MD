@@ -1,4 +1,11 @@
 # PyCast
+
+<p align="center">
+<img src="pycast_logo.png" alt="PyCast Logo" width="180">
+</p>
+<p align="center">
+A keyboard-driven launcher for Windows built with Python.
+</p>
 <p align="center">
   <img src="https://img.shields.io/badge/Python-3.6+-blue">
   <img src="https://img.shields.io/badge/Platform-Windows-blue">
@@ -8,13 +15,6 @@
   <img src="https://img.shields.io/badge/Status-Active%20Development-orange">
 </p>
 
-<p align="center">
-<img src="pycast_logo.png" alt="PyCast Logo" width="180">
-</p>
-
-<p align="center">
-A keyboard-driven launcher for Windows built with Python.
-</p>
 
 ## What is PyCast?
 
