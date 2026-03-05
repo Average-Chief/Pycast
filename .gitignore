@@ -39,3 +39,12 @@ icon_cache/
 
 # any test/scratch files
 main2.py
+
+# icon files
+*.ico
+
+# image files
+*.png
+*.jpg
+*.jpeg
+*.svg
