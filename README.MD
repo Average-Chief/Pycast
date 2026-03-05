@@ -1,11 +1,15 @@
 # PyCast
+<p align="center">
+  <img src="https://img.shields.io/badge/Python-3.6+-blue?style=for-the-badge&logo=python">
+  <img src="https://img.shields.io/badge/Platform-Windows-blue">
+  <img src="https://img.shields.io/badge/License-MIT-green">
+  <img src="https://img.shields.io/badge/Keyboard-Driven-success">
+  <img src="https://img.shields.io/badge/Search-Fuzzy-important">
+  <img src="https://img.shields.io/badge/Status-Active%20Development-orange">
+</p>
 
 <p align="center">
-
-<!-- Replace the src below with your actual logo file -->
-
 <img src="pycast_logo.png" alt="PyCast Logo" width="180">
-
 </p>
 
 <p align="center">
