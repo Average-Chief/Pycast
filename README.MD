@@ -1,5 +1,6 @@
 <p align="center">
 <img src="pycast_logo.png" alt="PyCast Logo" width="180">
+<h1>PyCast</h1>
 </p>
 <p align="center">
 A keyboard-driven launcher for Windows built with Python.
@@ -12,8 +13,6 @@ A keyboard-driven launcher for Windows built with Python.
   <img src="https://img.shields.io/badge/Search-Fuzzy-important">
   <img src="https://img.shields.io/badge/Status-Active%20Development-orange">
 </p>
-
-# PyCast
 
 ## What is PyCast?
 
