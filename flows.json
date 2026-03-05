@@ -6,7 +6,9 @@
     "steps": [
       { "type": "app",  "value": "chrome" },
       { "type": "app",  "value": "visual studio code" },
-      { "type": "url",  "value": "https://music.amazon.in" }
+      { "type": "url",  "value": "https://music.amazon.in" },
+      { "type": "url",  "value": "https://claude.ai/" },
+      { "type": "url",  "value": "https://chat.openai.com/" }
     ]
   },
   {
